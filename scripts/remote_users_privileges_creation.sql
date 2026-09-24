@@ -1,20 +1,25 @@
 /* Creacion de usuarios remotos y asignacion de privilegios */
 CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
 CREATE USER 'jonathan.leal'@'%' IDENTIFIED BY '240603';
-CREATE USER 'jeysi.lara'@'%' IDENTIFIED BY '240234';
+CREATE USER 'josu.oloarte'@'%' IDENTIFIED BY '240234';
+CREATE USER 'eutiquio.cruz'@'%' IDENTIFIED BY '240046'
 CREATE USER 'rene.david'@'%' IDENTIFIED BY '240107';
 CREATE USER 'margaret.rogas'@'%' IDENTIFIED BY '240242';
 
 /*Asignar los privilegios de superusuario*/
 GRANT ALL PRIVILEGES ON *.* TO 'jonathan.leal'@'%';
 
-/*Asignar los privilegios de lectura, escritura, actualizacion y eliminacion a los usuarios remotos*/
-GRANT SELECT, INSERT, UPDATE, DELETE ON `db_test_7b`.* TO 'marco.ramirez'@'%';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `db_test_7b`.* TO 'jeysi.lara'@'%';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `db_test_7b`.* TO 'margaret.rogas'@'%';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `db_test_7b`.* TO 'support';
+/*
+Asignar privilegios CRUD sobre la base db_test_7b.
+*/
 
-/*Creacio de roles y asignacion de privilegios a los roles*/
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON db_test_7b.*
+TO 'josu.oloarte'@'%';
+
+/* ==========================================================================================================================================
+CREACION DE ROLES PARA EL SISTEMA E-COMMERCE
+   ============================================================================================================================================*/
 CREATE ROLE 'superadmin'
 CREATE ROLE 'admin';
 CREATE ROLE 'seller';
@@ -22,20 +27,83 @@ CREATE ROLE 'buyer';
 CREATE ROLE 'guest';
 CREATE ROLE 'support';
 CREATE ROLE 'common';
-CREATE ROLE 'user_not_registered';
-/* ==========================================================================================================================================
-CREACION DE ROLES PARA EL SISTEMA E-COMMERCE
-   ============================================================================================================================================*/
 
-/*Asignacion de privilegios a los roles*/
-GRANT ALL PRIVILEGES ON * TO 'superadmin';
+/* ============================================================
+   ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES
+   ============================================================ */
 
-GRANT ALL PRIVILEGES ON db_test_7b TO 'admin';
+/* SUPERADMIN */
+GRANT ALL PRIVILEGES
+ON *.*
+TO 'superadmin';    
 
-/* ==========================================================================================================================================
-ASIGNACION DE PRIVILEGIOS A LOS ROLES
-   ============================================================================================================================================*/
+/* ADMIN */
+GRANT ALL PRIVILEGES
+ON db_test_7b.*
+TO 'admin';
 
-GRANT 'admin' TO 'jonathan.leal'@'%';
-GRANT 'support' TO 'jeysi.lara'@'%';
-GRANT 'support' TO 'rene.david'@'%';
+
+/* SUPPORT */
+GRANT SELECT, INSERT, UPDATE
+ON db_test_7b.tb_users
+TO 'support';
+
+GRANT SELECT, INSERT, UPDATE
+ON db_test_7b.tb_products
+TO 'support';
+
+/* SELLER */
+GRANT SELECT, INSERT, UPDATE
+ON db_test_7b.tb_products
+TO 'seller';
+
+/* ============================================================
+   ASIGNACIÓN DE ROLES A LOS USUARIOS
+   ============================================================ */
+
+-- Este deben ser ustedes
+GRANT 'superadmin'
+TO 'jonathan.leal'@'%';
+
+-- Este debe ser el Prof. Marco
+GRANT 'admin'
+TO 'marco.ramirez'@'%';
+
+-- IZQUIERDA
+GRANT 'support'
+TO 'josu.oloarte'@'%';
+
+-- DERECHA
+GRANT 'seller'
+TO 'eutiquio.cruz'@'%';
+
+GRANT 'seller'
+TO 'rene.david'@'%';
+
+/* ============================================================
+   ESTABLECER ROLES PREDETERMINADOS
+   ============================================================ */
+
+/*
+Esto permite que el rol se active automáticamente cuando
+el usuario inicia sesión.
+*/
+
+SET DEFAULT ROLE 'admin'
+TO 'marco.ramirez'@'%';
+
+SET DEFAULT ROLE 'support'
+TO 'josu.oloarte'@'%';
+
+SET DEFAULT ROLE 'seller'
+TO 'eutiquio.cruz'@'%';
+SET DEFAULT ROLE 'seller'
+TO 'rene.david'@'%';
+
+
+/* ============================================================
+   VERIFICACIÓN
+   ============================================================ */
+
+/* Mostrar usuarios remotos creados */
+SELECT "Los usuarios y privilegios han sido creados correctamente" AS mensaje;
