@@ -2,10 +2,10 @@
 CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
 CREATE USER 'jonathan.leal'@'%' IDENTIFIED BY '240603';
 CREATE USER 'josu.oloarte'@'%' IDENTIFIED BY '240234';
-CREATE USER 'eutiquio.cruz'@'%' IDENTIFIED BY '240046'
+/*CREATE USER 'eutiquio.cruz'@'%' IDENTIFIED BY '240046' */
+CREATE USER 'jey.lara'@'%' IDENTIFIED BY '240234';
 CREATE USER 'rene.david'@'%' IDENTIFIED BY '240107';
 CREATE USER 'margaret.rogas'@'%' IDENTIFIED BY '240242';
-
 /*Asignar los privilegios de superusuario*/
 GRANT ALL PRIVILEGES ON *.* TO 'jonathan.leal'@'%';
 
@@ -70,12 +70,14 @@ GRANT 'admin'
 TO 'marco.ramirez'@'%';
 
 -- IZQUIERDA
-GRANT 'support'
+GRANT 'seller'
 TO 'josu.oloarte'@'%';
 
 -- DERECHA
 GRANT 'seller'
-TO 'eutiquio.cruz'@'%';
+TO 'jey.lara'@'%';
+/*GRANT 'seller'
+TO 'eutiquio.cruz'@'%';*/
 
 GRANT 'seller'
 TO 'rene.david'@'%';
@@ -92,11 +94,13 @@ el usuario inicia sesión.
 SET DEFAULT ROLE 'admin'
 TO 'marco.ramirez'@'%';
 
-SET DEFAULT ROLE 'support'
+SET DEFAULT ROLE 'seller'
 TO 'josu.oloarte'@'%';
 
 SET DEFAULT ROLE 'seller'
-TO 'eutiquio.cruz'@'%';
+TO 'jey.lara'@'%';
+/*SET DEFAULT ROLE 'seller'
+TO 'eutiquio.cruz'@'%';*/
 SET DEFAULT ROLE 'seller'
 TO 'rene.david'@'%';
 

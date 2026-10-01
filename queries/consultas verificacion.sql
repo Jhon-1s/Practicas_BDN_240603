@@ -64,11 +64,16 @@ SHOW PROCEDURE STATUS WHERE Db = 'db_test_7b';
 
 
 /* 10. Verificación de Productos*/
-/* Contabilizar los productos */
 SELECT COUNT(*) FROM tb_products;
 
-/* Visualizar todos los productos */
+/* 11. Contabilizar los productos */
 SELECT * FROM tb_products;
 
-/* Consulta para saber la trazabilidad de los productos */
+/* 12. Consulta para saber la trazabilidad de los productos */
 SELECT * FROM vw_trazabilidad_productos LIMIT 10;
+
+SELECT * FROM vw_trazabilidad_usuarios ORDER BY operation_date ASC;
+
+SELECT COUNT(*), vp.insert_by
+FROM vw_trazabilidad_productos vp
+GROUP BY vp.insert_by;
