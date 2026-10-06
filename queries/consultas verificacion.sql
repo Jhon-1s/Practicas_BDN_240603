@@ -1,10 +1,10 @@
-USE db_test;
+USE db_test_7b;
 
 /* 1. Cuantas tablas existen en la base de datos db_test_7b? */
 SHOW TABLES;
 
 /* 2. Cuanto triggers existen en la base de datos db_test_7b? */
-SHOW TRIGGERS FROM db_test;
+SHOW TRIGGERS FROM db_test_7b;
 
 /* 3. Cuantos registros existen en la tabla users? */
 -- Total de Usuarios
@@ -72,7 +72,9 @@ SELECT * FROM tb_products;
 /* 12. Consulta para saber la trazabilidad de los productos */
 SELECT * FROM vw_trazabilidad_productos LIMIT 10;
 
-SELECT * FROM vw_trazabilidad_usuarios ORDER BY operation_date ASC;
+SELECT * 
+FROM vw_trazabilidad_usuarios 
+ORDER BY fecha_operacion ASC;
 
 SELECT COUNT(*), vp.insert_by
 FROM vw_trazabilidad_productos vp
