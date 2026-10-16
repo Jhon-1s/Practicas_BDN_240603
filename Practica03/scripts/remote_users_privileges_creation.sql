@@ -79,8 +79,11 @@ TO 'jey.lara'@'%';
 /*GRANT 'seller'
 TO 'eutiquio.cruz'@'%';*/
 
-GRANT 'seller'
-TO 'rene.david'@'%';
+/*GRANT 'seller'
+TO 'rene.david'@'%';*/
+
+GRANT 'support'
+TO 'margo.rogas'@'%';
 
 /* ============================================================
    ESTABLECER ROLES PREDETERMINADOS
@@ -101,8 +104,8 @@ SET DEFAULT ROLE 'seller'
 TO 'jey.lara'@'%';
 /*SET DEFAULT ROLE 'seller'
 TO 'eutiquio.cruz'@'%';*/
-SET DEFAULT ROLE 'seller'
-TO 'rene.david'@'%';
+SET DEFAULT ROLE 'support'
+TO 'margo.rogas'@'%';
 
 
 /* ============================================================
