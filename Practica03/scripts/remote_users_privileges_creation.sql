@@ -1,127 +1,110 @@
-/* Creacion de usuarios remotos y asignacion de privilegios */
-CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
-CREATE USER 'jonathan.leal'@'%' IDENTIFIED BY '240603';
-CREATE USER 'josu.oloarte'@'%' IDENTIFIED BY '240234';
-CREATE USER 'oli.sanchez'@'%' IDENTIFIED BY '240615';
-CREATE USER 'jey.lara'@'%' IDENTIFIED BY '240234';
-CREATE USER 'rene.david'@'%' IDENTIFIED BY '240107';
-CREATE USER 'margaret.rogas'@'%' IDENTIFIED BY '240242';
-/*Asignar los privilegios de superusuario*/
-GRANT ALL PRIVILEGES ON *.* TO 'jonathan.leal'@'%';
+/* ==========================================================================================================================================
+   1. CREACIÓN DE LA BASE DE DATOS
+   ============================================================================================================================================ */
+CREATE DATABASE IF NOT EXISTS db_test_7b;
+USE db_test_7b;
 
-/*
-Asignar privilegios CRUD sobre la base db_test_7b.
-*/
-
-GRANT SELECT, INSERT, UPDATE, DELETE
-ON db_test_7b.*
-TO 'josu.oloarte'@'%';
+/* Configuración global para activar roles al iniciar sesión */
+SET GLOBAL activate_all_roles_on_login = ON;
 
 /* ==========================================================================================================================================
-CREACION DE ROLES PARA EL SISTEMA E-COMMERCE
-   ============================================================================================================================================*/
-CREATE ROLE 'superadmin'
-CREATE ROLE 'admin';
-CREATE ROLE 'seller';
-CREATE ROLE 'buyer';
-CREATE ROLE 'guest';
-CREATE ROLE 'support';
-CREATE ROLE 'common';
+   2. CREACIÓN DE ROLES
+   ============================================================================================================================================ */
+CREATE ROLE IF NOT EXISTS 'superadmin';
+CREATE ROLE IF NOT EXISTS 'admin';
+CREATE ROLE IF NOT EXISTS 'seller';
+CREATE ROLE IF NOT EXISTS 'buyer';
+CREATE ROLE IF NOT EXISTS 'guest';
+CREATE ROLE IF NOT EXISTS 'support';
+CREATE ROLE IF NOT EXISTS 'common';
+CREATE ROLE IF NOT EXISTS 'user_not_registered';
 
-/* ============================================================
-   ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES
-   ============================================================ */
+/* ==========================================================================================================================================
+   3. CREACIÓN DE USUARIOS
+   ============================================================================================================================================ */
+CREATE USER IF NOT EXISTS 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
+CREATE USER IF NOT EXISTS 'jonathan.leal'@'%' IDENTIFIED BY '240603';
+CREATE USER IF NOT EXISTS 'josu.oloarte'@'%' IDENTIFIED BY '240234';
+CREATE USER IF NOT EXISTS 'jey.lara'@'%' IDENTIFIED BY '240234';
+CREATE USER IF NOT EXISTS 'rene.david'@'%' IDENTIFIED BY '240107';
+CREATE USER IF NOT EXISTS 'margaret.rogas'@'%' IDENTIFIED BY '240242';
+CREATE USER IF NOT EXISTS 'app_web'@'%' IDENTIFIED BY 'web123';
+CREATE USER IF NOT EXISTS 'app_mobile'@'%' IDENTIFIED BY 'mobile890';
+
+/* asegurar/actualizar contraseñas */
+ALTER USER 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
+ALTER USER 'jonathan.leal'@'%' IDENTIFIED BY '240603';
+ALTER USER 'josu.oloarte'@'%' IDENTIFIED BY '240234';
+ALTER USER 'jey.lara'@'%' IDENTIFIED BY '240234';
+ALTER USER 'rene.david'@'%' IDENTIFIED BY '240107';
+ALTER USER 'margaret.rogas'@'%' IDENTIFIED BY '240242';
+ALTER USER 'app_web'@'%' IDENTIFIED BY 'web123';
+ALTER USER 'app_mobile'@'%' IDENTIFIED BY 'mobile890';
+
+/* ==========================================================================================================================================
+   4. ASIGNACIÓN DE PRIVILEGIOS A LOS ROLES
+   ============================================================================================================================================ */
 
 /* SUPERADMIN */
-GRANT ALL PRIVILEGES
-ON *.*
-TO 'superadmin';    
+GRANT ALL PRIVILEGES ON *.* TO 'superadmin' WITH GRANT OPTION;
 
 /* ADMIN */
-GRANT ALL PRIVILEGES
-ON db_test_7b.*
-TO 'admin';
-
+GRANT ALL PRIVILEGES ON db_test_7b.* TO 'admin';
 
 /* SUPPORT */
-GRANT SELECT, INSERT, UPDATE
-ON db_test_7b.tb_users
-TO 'support';
-
-GRANT SELECT, INSERT, UPDATE
-ON db_test_7b.tb_products
-TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test_7b.tb_users TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test_7b.tb_products TO 'support';
+GRANT SELECT, INSERT, UPDATE ON db_test_7b.tbd_products_categories TO 'support';
 
 /* SELLER */
-GRANT SELECT, INSERT, UPDATE
-ON db_test_7b.tb_products
-TO 'seller';
+GRANT SELECT, INSERT, UPDATE ON db_test_7b.* TO 'seller';
 
-GRANT SELECT, INSERT, UPDATE
-ON db_test_7b.tb_products
-TO 'buyer';
+/* USER_NOT_REGISTERED (Para conexiones de aplicaciones) */
+GRANT INSERT ON db_test_7b.tb_users TO 'user_not_registered';
 
-/* ============================================================
-   ASIGNACIÓN DE ROLES A LOS USUARIOS
-   ============================================================ */
+/* Execución de procedimientos almacenados para no registrados si existen */
+-- GRANT EXECUTE ON PROCEDURE db_test_7b.sp_register_new_user TO 'user_not_registered';
 
--- Este deben ser ustedes
-GRANT 'superadmin'
-TO 'jonathan.leal'@'%';
+/* ==========================================================================================================================================
+   5. ASIGNACIÓN DE PRIVILEGIOS DIRECTOS A USUARIOS
+   ============================================================================================================================================ */
+GRANT ALL PRIVILEGES ON *.* TO 'jonathan.leal'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON db_test_7b.* TO 'jonathan.leal'@'%';
 
--- Este debe ser el Prof. Marco
-GRANT 'admin'
-TO 'marco.ramirez'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'marco.ramirez'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON db_test_7b.* TO 'marco.ramirez'@'%';
 
--- IZQUIERDA
-GRANT 'seller'
-TO 'josu.oloarte'@'%';
+/* Permisos CRUD directos */
+GRANT SELECT, INSERT, UPDATE, DELETE ON db_test_7b.* TO 'josu.oloarte'@'%';
 
--- DERECHA
-GRANT 'seller'
-TO 'jey.lara'@'%';
-/*GRANT 'seller'
-TO 'eutiquio.cruz'@'%';*/
+/* ==========================================================================================================================================
+   6. ASIGNACIÓN DE ROLES A USUARIOS
+   ============================================================================================================================================ */
+GRANT 'superadmin' TO 'jonathan.leal'@'%';
+GRANT 'admin' TO 'marco.ramirez'@'%';
+GRANT 'seller' TO 'josu.oloarte'@'%';
+GRANT 'seller' TO 'jey.lara'@'%';
+GRANT 'seller' TO 'rene.david'@'%';
+GRANT 'support' TO 'margaret.rogas'@'%';
 
-/*GRANT 'seller'
-TO 'rene.david'@'%';*/
+GRANT 'user_not_registered' TO 'app_web'@'%';
+GRANT 'user_not_registered' TO 'app_mobile'@'%';
 
-GRANT 'support'
-TO 'margo.rogas'@'%';
+/* ==========================================================================================================================================
+   7. DEFINIR ROLES POR DEFECTO
+   ============================================================================================================================================ */
+SET DEFAULT ROLE ALL TO 'jonathan.leal'@'%';
+SET DEFAULT ROLE ALL TO 'marco.ramirez'@'%';
+SET DEFAULT ROLE ALL TO 'josu.oloarte'@'%';
+SET DEFAULT ROLE ALL TO 'jey.lara'@'%';
+SET DEFAULT ROLE ALL TO 'rene.david'@'%';
+SET DEFAULT ROLE ALL TO 'margaret.rogas'@'%';
+SET DEFAULT ROLE ALL TO 'app_web'@'%';
+SET DEFAULT ROLE ALL TO 'app_mobile'@'%';
 
-GRANT 'support'
-TO 'oli.sanchez'@'%';
+/* ==========================================================================================================================================
+   8. APLICAR CAMBIOS Y VERIFICACIÓN
+   ============================================================================================================================================ */
+FLUSH PRIVILEGES;
 
-/* ============================================================
-   ESTABLECER ROLES PREDETERMINADOS
-   ============================================================ */
-
-/*
-Esto permite que el rol se active automáticamente cuando
-el usuario inicia sesión.
-*/
-
-SET DEFAULT ROLE 'admin'
-TO 'marco.ramirez'@'%';
-
-SET DEFAULT ROLE 'seller'
-TO 'josu.oloarte'@'%';
-
-SET DEFAULT ROLE 'seller'
-TO 'jey.lara'@'%';
-/*SET DEFAULT ROLE 'seller'
-TO 'eutiquio.cruz'@'%';*/
-SET DEFAULT ROLE 'support'
-TO 'margo.rogas'@'%';
-
-SET DEFAULT ROLE 'buyer'
-TO 'oli.sanchez'@'%';
-
-
-
-/* ============================================================
-   VERIFICACIÓN
-   ============================================================ */
-
-/* Mostrar usuarios remotos creados */
-SELECT "Los usuarios y privilegios han sido creados correctamente" AS mensaje;
+SELECT "Los usuarios y privilegios han sido creados e integrados correctamente" AS mensaje;
