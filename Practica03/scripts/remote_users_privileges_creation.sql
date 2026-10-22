@@ -2,7 +2,7 @@
 CREATE USER 'marco.ramirez'@'%' IDENTIFIED BY 'quwerty123';
 CREATE USER 'jonathan.leal'@'%' IDENTIFIED BY '240603';
 CREATE USER 'josu.oloarte'@'%' IDENTIFIED BY '240234';
-/*CREATE USER 'eutiquio.cruz'@'%' IDENTIFIED BY '240046' */
+CREATE USER 'oli.sanchez'@'%' IDENTIFIED BY '240615';
 CREATE USER 'jey.lara'@'%' IDENTIFIED BY '240234';
 CREATE USER 'rene.david'@'%' IDENTIFIED BY '240107';
 CREATE USER 'margaret.rogas'@'%' IDENTIFIED BY '240242';
@@ -57,6 +57,10 @@ GRANT SELECT, INSERT, UPDATE
 ON db_test_7b.tb_products
 TO 'seller';
 
+GRANT SELECT, INSERT, UPDATE
+ON db_test_7b.tb_products
+TO 'buyer';
+
 /* ============================================================
    ASIGNACIÓN DE ROLES A LOS USUARIOS
    ============================================================ */
@@ -85,6 +89,9 @@ TO 'rene.david'@'%';*/
 GRANT 'support'
 TO 'margo.rogas'@'%';
 
+GRANT 'support'
+TO 'oli.sanchez'@'%';
+
 /* ============================================================
    ESTABLECER ROLES PREDETERMINADOS
    ============================================================ */
@@ -106,6 +113,10 @@ TO 'jey.lara'@'%';
 TO 'eutiquio.cruz'@'%';*/
 SET DEFAULT ROLE 'support'
 TO 'margo.rogas'@'%';
+
+SET DEFAULT ROLE 'buyer'
+TO 'oli.sanchez'@'%';
+
 
 
 /* ============================================================
