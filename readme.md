@@ -11,3 +11,5 @@ Periodo Septiembre - Diciembre 2026
 |---|---|---|---|---|
 |1.|Metodología de Evaluación de la Materia|Transcribir en libreta y comprender la metodología y fechas de Evaluación de la asiganatura|5|🟢 Concluida|
 |2.|Conexiones Remotas para Bases de Datos SQL|Crear y administrar usuarios y privilegios de origines remotos atraves de internet o una red local|60|🟢 Concluida|
+| 3 | Manipulación de Datos en Conexiones Remotas a Bases de Datos Relacionales | Crear procedimientos almacenados, funciones, tablas derivadas e importación de datos en el contexto de E-Commerce. | ?? |🟢 Concluida|
+| 4 | Examen Práctico: Instalación de PostgreSQL y MySQL en un VPS | Instalar, configurar, desplegar y simular datos en los servicios de bases de datos relacionales remotas. | ?? | 🟡 En progreso |
