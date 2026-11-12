@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diccionario de datos · db_test_7b</title>
+<style>
+:root{color-scheme:light;--ink:#172334;--muted:#65748a;--line:#dbe2eb;--paper:#f4f6f9;--white:#fff;--blue:#2558a5;--blue-soft:#eaf1fc;--green:#157451;--purple:#7144a1}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 Inter,Segoe UI,Arial,sans-serif}
+header{height:94px;position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:24px;padding:15px 26px}
+.brand{min-width:250px}
+.brand small{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--blue);font-weight:700}
+h1{font-size:20px;margin:2px 0}
+.sub{font-size:11px;color:var(--muted)}
+.search{flex:1;max-width:680px;position:relative}
+.search input{width:100%;padding:12px 14px 12px 40px;border:1px solid #cbd5e2;border-radius:9px;background:#f9fbfd;color:var(--ink);font:inherit;outline:none}
+.search input:focus{border-color:#6b93ce;box-shadow:0 0 0 3px #dce8fa}
+.search span{position:absolute;left:14px;top:10px;color:#75849b;font-size:18px}
+.actions{display:flex;gap:7px;margin-left:auto}
+button{border:1px solid #cbd5e2;background:white;color:#304058;border-radius:8px;padding:8px 11px;cursor:pointer;font-weight:600}
+button:hover{color:var(--blue);border-color:#7195c7}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 94px)}
+nav{position:sticky;top:94px;align-self:start;height:calc(100vh - 94px);overflow:auto;background:#fff;border-right:1px solid var(--line);padding:19px 13px}
+.nav-title{padding:0 10px 9px;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.13em}
+.nav-link{display:flex;justify-content:space-between;gap:8px;text-decoration:none;color:#43536a;padding:7px 10px;border-radius:6px;font-size:12px}
+.nav-link:hover,.nav-link.active{background:var(--blue-soft);color:var(--blue)}
+.nav-count{font-size:10px;color:#8794a7}
+.content{padding:22px clamp(16px,3vw,42px) 70px;max-width:1600px;width:100%;margin:auto}
+.summary{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 18px}
+.summary h2{margin:0;font-size:18px}
+.summary p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.table-card{background:white;border:1px solid var(--line);border-radius:12px;margin:0 0 22px;box-shadow:0 3px 12px #14253a08;scroll-margin-top:112px}
+.table-head{padding:16px 18px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px}
+.table-head h3{margin:0;font-size:17px;letter-spacing:.01em}
+.purpose{color:var(--muted);font-size:12px;margin-top:4px}
+.metrics{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;align-content:flex-start}
+.pill{border:1px solid #d8e0ea;border-radius:99px;padding:4px 8px;color:#52627a;font-size:10px;white-space:nowrap}
+.pill.rows{background:#eaf6f0;border-color:#c4e7d5;color:#176644;font-weight:700}
+.matrix-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:1180px;font-size:11px}
+th{text-align:left;background:#f5f7fa;color:#526178;font-size:10px;text-transform:uppercase;letter-spacing:.055em;padding:9px 10px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}
+td{padding:9px 10px;border-bottom:1px solid #edf0f4;vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#f9fbfe}
+.field{font-weight:700;white-space:nowrap}
+.type{font-family:Consolas,monospace;color:#334b69;white-space:nowrap}
+.default{font-family:Consolas,monospace;color:#77552f}
+.nullable{white-space:nowrap}
+.tag{display:inline-block;margin:0 3px 3px 0;padding:2px 5px;border-radius:4px;background:#edf1f5;color:#53647b;font-size:9px;font-weight:700;white-space:nowrap}
+.tag.pk{background:#def4ee;color:#11644e}
+.tag.fk{background:#f0e8fb;color:#684294}
+.tag.unique{background:#fff1d8;color:#86550b}
+.tag.index{background:#e8effa;color:#355c94}
+.tag.attr{background:#f2f3f5;color:#5d6572}
+.reference{font-family:Consolas,monospace;color:#684294;white-space:nowrap}
+.extra{border-top:1px solid var(--line);padding:13px 18px 16px;display:grid;grid-template-columns:minmax(280px,1fr) minmax(280px,1fr);gap:18px}
+.extra h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#586982}
+.index-item,.fk-item{font-size:11px;padding:6px 8px;background:#f5f7fa;border-radius:6px;margin:0 0 5px}
+.index-item code,.fk-item code{font-family:Consolas,monospace;color:#334b69}
+.empty{font-size:11px;color:#8793a4}
+.hidden{display:none!important}
+.filters{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 15px}
+.filters span{font-size:11px;color:var(--muted);font-weight:700}
+.filters button.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.exec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 20px}
+.exec-card{padding:13px 15px;background:#fff;border:1px solid var(--line);border-radius:10px;display:grid;gap:5px}
+.exec-card small{color:var(--muted);font-size:10px}
+.exec-card b{font-size:18px;color:var(--ink)}
+.index-card{margin-bottom:18px}
+.index-card table{min-width:860px}
+.objects-grid{padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.object-group{min-width:0}
+.object-group h4{margin:0 0 8px;font-size:12px;color:#586982;text-transform:uppercase;letter-spacing:.06em}
+.object-group details{border:1px solid var(--line);border-radius:7px;padding:8px 10px;margin:0 0 6px;font-size:11px}
+.object-group summary{cursor:pointer;font-weight:700}
+.object-group pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;font-size:10px;color:#43536a;background:#f5f7fa;padding:8px;border-radius:5px}
+.no-results{background:white;border:1px solid var(--line);border-radius:10px;padding:35px;text-align:center;color:var(--muted)}
+.footer{font-size:11px;color:var(--muted);padding:12px 2px}
+.matched{background:#fff4cc}
+.toast{position:fixed;right:18px;bottom:18px;background:#172334;color:white;padding:10px 14px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1;transform:none}
+@media print{header,nav,.filters,.actions{display:none!important}.layout{display:block}.table-card{break-inside:avoid;box-shadow:none}}
+@media(max-width:900px){header{height:auto;min-height:94px;flex-wrap:wrap;gap:10px;padding:12px 15px}.brand{min-width:180px}.search{order:3;flex-basis:100%;max-width:none}.layout{grid-template-columns:190px minmax(0,1fr)}nav{top:120px;height:calc(100vh - 120px)}.table-head{flex-direction:column}.metrics{justify-content:flex-start}}
+@media(max-width:620px){.layout{grid-template-columns:1fr}nav{position:static;height:auto;max-height:170px;border-right:0;border-bottom:1px solid var(--line);columns:2}.nav-title{column-span:all}.content{padding:14px}.extra{grid-template-columns:1fr}.actions{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <small>Catálogo técnico · MySQL</small>
+    <h1>Diccionario de Datos</h1>
+    <div class="sub" id="database"></div>
+  </div>
+  <label class="search">
+    <span>⌕</span>
+    <input id="q" type="search" placeholder="Buscar tabla, campo, tipo de dato…" autocomplete="off" aria-label="Búsqueda global">
+  </label>
+  <div class="actions">
+    <button id="md">Exportar Markdown</button>
+    <button id="csv">Exportar CSV</button>
+    <button id="json">Exportar JSON</button>
+    <button id="print">Imprimir</button>
+  </div>
+</header>
+
+<div class="layout">
+  <nav>
+    <div class="nav-title">Tablas <span id="navCount"></span></div>
+    <div id="nav"></div>
+  </nav>
+  <main class="content">
+    <div class="summary">
+      <div>
+        <h2>Inventario de entidades</h2>
+        <p id="summary"></p>
+      </div>
+      <div class="sub">Fuente: respaldo20261211.sql</div>
+    </div>
+    <div id="executive"></div>
+    <section class="table-card index-card">
+      <div class="table-head">
+        <div>
+          <h3>Índice general de entidades</h3>
+          <div class="purpose">Volumen, estructura y dependencias por tabla</div>
+        </div>
+      </div>
+      <div id="entity-index" class="matrix-wrap"></div>
+    </section>
+    <section class="table-card index-card">
+      <div class="table-head">
+        <div>
+          <h3>Vistas, disparadores, rutinas y alteraciones</h3>
+          <div class="purpose">Objetos declarados en el respaldo SQL</div>
+        </div>
+      </div>
+      <div id="objects" class="objects-grid"></div>
+    </section>
+    <div class="filters" id="filters">
+      <span>Filtros:</span>
+      <button data-filter="pk">Tablas con PK</button>
+      <button data-filter="fk">Tablas con FK</button>
+      <button data-filter="rows">Con datos (&gt; 0)</button>
+      <button data-filter="clear">Limpiar</button>
+    </div>
+    <div id="dictionary"></div>
+    <div id="empty" class="no-results hidden">No hay tablas o columnas que coincidan con la búsqueda.</div>
+    <div class="footer">Los conteos corresponden a filas incluidas en sentencias INSERT del respaldo. Las descripciones de propósito son estimaciones derivadas del esquema.</div>
+  </main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const DATA = {
+  "database": "db_test_7b",
+  "tables": [
+    {
+      "name": "tb_carts",
+      "columns": [
+        {"name": "ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "user_ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": ["UNIQUE"], "uniqueIndexes": ["uk_cart_user"], "comment": null, "reference": "tb_users(ID)", "description": "Referencia a tb_users(ID); su integridad se rige por la llave foránea declarada."},
+        {"name": "status", "type": "bit(1)", "nullable": "NOT NULL", "auto": false, "default": "b'1'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Estado o indicador de disponibilidad del registro; el dominio concreto depende del tipo SQL."},
+        {"name": "creation_date", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se creó el registro."},
+        {"name": "last_update", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": ["ON UPDATE CURRENT_TIMESTAMP"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de la última actualización del registro."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "uk_cart_user", "columns": ["user_ID"], "unique": true, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_carts_user", "columns": ["user_ID"], "target": "tb_users", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 1, "comment": null, "checks": [],
+      "purpose": "Carritos de compra asociados a cuentas de usuario.",
+      "incomingForeignKeys": [
+        {"table": "tbd_cart_items", "name": "fk_cart_items_cart", "columns": ["id_cart"], "targetColumns": ["ID"], "onDelete": "CASCADE", "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_logs",
+      "columns": [
+        {"name": "ID", "type": "int", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": [], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "table_name", "type": "varchar(80)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Nombre de la tabla afectada por la operación registrada."},
+        {"name": "table_operation", "type": "enum('Create','Read','Update','Delete')", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Valor categórico del campo table_operation; valores permitidos por el tipo ENUM: Create, Read, Update, Delete."},
+        {"name": "db_users", "type": "varchar(80)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Usuario de base de datos que ejecutó la operación."},
+        {"name": "operation_date", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de la operación registrada."},
+        {"name": "table_description", "type": "text", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Detalle de la operación o cambio registrado en la bitácora."},
+        {"name": "operation_status", "type": "bit(1)", "nullable": "NOT NULL", "auto": false, "default": "b'1'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Resultado o indicador de estado de la operación registrada."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true}
+      ],
+      "foreignKeys": [],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 12046, "comment": null, "checks": [],
+      "purpose": "Bitácora de operaciones realizadas sobre los datos del sistema.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_order_cancellations",
+      "columns": [
+        {"name": "id_cancellation", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "id_order", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_orders(id_order)", "description": "Referencia a tb_orders(id_order); su integridad se rige por la llave foránea declarada."},
+        {"name": "reason", "type": "text", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Motivo o justificación textual de la operación."},
+        {"name": "cancelled_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha u hora relacionada con cancelled at."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_cancellation"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "id_order", "columns": ["id_order"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "tb_order_cancellations_ibfk_1", "columns": ["id_order"], "target": "tb_orders", "targetColumns": ["id_order"], "onDelete": "CASCADE", "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 0, "comment": null, "checks": [],
+      "purpose": "Motivos y fechas de cancelación de órdenes.",
+      "incomingForeignKeys": [
+        {"table": "tbd_cancellation_items", "name": "fk_ci_cancellation", "columns": ["id_cancellation"], "targetColumns": ["id_cancellation"], "onDelete": "CASCADE", "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_orders",
+      "columns": [
+        {"name": "id_order", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "id_user", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_users(ID)", "description": "Referencia a tb_users(ID); su integridad se rige por la llave foránea declarada."},
+        {"name": "id_address", "type": "bigint unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_user_addresses(ID)", "description": "Referencia a tb_user_addresses(ID); su integridad se rige por la llave foránea declarada."},
+        {"name": "total_amount", "type": "decimal(10,2)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Importe total calculado para la orden o transacción."},
+        {"name": "status", "type": "enum('pending','paid','shipped','delivered','cancelled')", "nullable": "NOT NULL", "auto": false, "default": "'pending'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Valor categórico del campo status; valores permitidos por el tipo ENUM: pending, paid, shipped, delivered, cancelled."},
+        {"name": "created_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se creó el registro."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_order"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_orders_user", "columns": ["id_user"], "unique": false, "type": "BTREE"},
+        {"name": "fk_orders_address", "columns": ["id_address"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_orders_address", "columns": ["id_address"], "target": "tb_user_addresses", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null},
+        {"name": "fk_orders_user", "columns": ["id_user"], "target": "tb_users", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 1, "comment": null, "checks": [],
+      "purpose": "Órdenes de compra, dirección de entrega, importe y estado.",
+      "incomingForeignKeys": [
+        {"table": "tb_order_cancellations", "name": "tb_order_cancellations_ibfk_1", "columns": ["id_order"], "targetColumns": ["id_order"], "onDelete": "CASCADE", "onUpdate": null},
+        {"table": "tb_payments", "name": "fk_payments_order", "columns": ["id_order"], "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_returns", "name": "fk_returns_order", "columns": ["id_order"], "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_shipments", "name": "fk_shipments_order", "columns": ["id_order"], "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_payment_methods",
+      "columns": [
+        {"name": "id_payment_method", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "id_payment_type", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tbc_payment_methods_types(ID)", "description": "Referencia a tbc_payment_methods_types(ID); su integridad se rige por la llave foránea declarada."},
+        {"name": "provider_name", "type": "varchar(100)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Nombre del proveedor del método de pago."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_payment_method"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_pm_type", "columns": ["id_payment_type"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_pm_type", "columns": ["id_payment_type"], "target": "tbc_payment_methods_types", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 3, "comment": null, "checks": [],
+      "purpose": "Catálogo de métodos de pago disponibles.",
+      "incomingForeignKeys": [
+        {"table": "tb_payments", "name": "fk_payments_method", "columns": ["id_payment_method"], "targetColumns": ["id_payment_method"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_payment_transaction",
+      "columns": [
+        {"name": "id_transaction", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "id_payment", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_payments(id_payment)", "description": "Referencia a tb_payments(id_payment); su integridad se rige por la llave foránea declarada."},
+        {"name": "transaction_code", "type": "varchar(100)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": ["UNIQUE"], "uniqueIndexes": ["transaction_code"], "comment": null, "description": "Código único de transacción emitido por la pasarela."},
+        {"name": "response_payload", "type": "text", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Carga útil o respuesta cruda de la pasarela de pago."},
+        {"name": "created_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se creó el registro."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_transaction"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "transaction_code", "columns": ["transaction_code"], "unique": true, "type": "BTREE"},
+        {"name": "fk_pt_payment", "columns": ["id_payment"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_pt_payment", "columns": ["id_payment"], "target": "tb_payments", "targetColumns": ["id_payment"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 1, "comment": null, "checks": [],
+      "purpose": "Transacciones asociadas a pagos.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_payments",
+      "columns": [
+        {"name": "id_payment", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "id_order", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_orders(id_order)", "description": "Referencia a tb_orders(id_order); su integridad se rige por la llave foránea declarada."},
+        {"name": "id_payment_method", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [null], "uniqueIndexes": [], "comment": null, "reference": "tb_payment_methods(id_payment_method)", "description": "Referencia a tb_payment_methods(id_payment_method); su integridad se rige por la llave foránea declarada."},
+        {"name": "amount", "type": "decimal(10,2)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Importe monetario de la operación."},
+        {"name": "payment_status", "type": "enum('pending','completed','failed','refunded')", "nullable": "NOT NULL", "auto": false, "default": "'pending'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Valor categórico del campo payment_status; valores permitidos por el tipo ENUM: pending, completed, failed, refunded."},
+        {"name": "paid_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se efectuó el pago."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_payment"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_payments_order", "columns": ["id_order"], "unique": false, "type": "BTREE"},
+        {"name": "fk_payments_method", "columns": ["id_payment_method"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_payments_method", "columns": ["id_payment_method"], "target": "tb_payment_methods", "targetColumns": ["id_payment_method"], "onDelete": null, "onUpdate": null},
+        {"name": "fk_payments_order", "columns": ["id_order"], "target": "tb_orders", "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 1, "comment": null, "checks": [],
+      "purpose": "Pagos aplicados a órdenes y su estado de procesamiento.",
+      "incomingForeignKeys": [
+        {"table": "tb_payment_transaction", "name": "fk_pt_payment", "columns": ["id_payment"], "targetColumns": ["id_payment"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_refunds", "name": "fk_refunds_payment", "columns": ["id_payment"], "targetColumns": ["id_payment"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_people",
+      "columns": [
+        {"name": "person_ID", "type": "bigint unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "user_ID", "type": "int unsigned", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": ["UNIQUE"], "uniqueIndexes": ["user_ID"], "comment": null, "reference": "tb_users(ID)", "description": "Referencia a tb_users(ID); su integridad se rige por la llave foránea declarada."},
+        {"name": "courtesy_title", "type": "varchar(50)", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Título de cortesía de la persona."},
+        {"name": "given_names", "type": "varchar(150)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Nombres de pila de la persona."},
+        {"name": "family_names", "type": "varchar(150)", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Apellidos de la persona."},
+        {"name": "birth_date", "type": "date", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha de nacimiento de la persona."},
+        {"name": "gender", "type": "enum('hombre','mujer','Prefiero no decirlo')", "nullable": "NOT NULL", "auto": false, "default": "'Prefiero no decirlo'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Valor categórico del campo gender; valores permitidos por el tipo ENUM: hombre, mujer, Prefiero no decirlo."},
+        {"name": "country_code", "type": "char(2)", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Código ISO de 2 letras del país."},
+        {"name": "phone", "type": "varchar(25)", "nullable": "NULL", "auto": false, "default": "NULL", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Número telefónico de contacto."},
+        {"name": "status", "type": "bit(1)", "nullable": "NOT NULL", "auto": false, "default": "b'1'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Estado o indicador de disponibilidad del registro."},
+        {"name": "creation_date", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se creó el registro."},
+        {"name": "last_update", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": ["ON UPDATE CURRENT_TIMESTAMP"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de la última actualización del registro."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["person_ID"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "user_ID", "columns": ["user_ID"], "unique": true, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_people_users", "columns": ["user_ID"], "target": "tb_users", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 2, "comment": null, "checks": [],
+      "purpose": "Información personal vinculada a una cuenta.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_products",
+      "columns": [
+        {"name": "ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la fila; generado automáticamente."},
+        {"name": "SKU", "type": "varchar(50)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": ["UNIQUE"], "uniqueIndexes": ["SKU"], "comment": null, "description": "Código SKU usado para identificar el producto en el catálogo."},
+        {"name": "name", "type": "varchar(250)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Nombre visible del elemento."},
+        {"name": "description", "type": "text", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Descripción textual del elemento."},
+        {"name": "current_price", "type": "decimal(10,2)", "nullable": "NOT NULL", "auto": false, "default": "'0.00'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Precio vigente del producto en la moneda definida por la aplicación."},
+        {"name": "current_stock", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": "'0'", "attributes": ["UNSIGNED"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Existencias actuales del producto."},
+        {"name": "status", "type": "bit(1)", "nullable": "NOT NULL", "auto": false, "default": "b'1'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Estado o indicador de disponibilidad del registro; el dominio concreto depende del tipo SQL."},
+        {"name": "creation_date", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora en que se creó el registro."},
+        {"name": "last_update", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": ["ON UPDATE CURRENT_TIMESTAMP"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de la última actualización del registro."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "SKU", "columns": ["SKU"], "unique": true, "type": "BTREE"}
+      ],
+      "foreignKeys": [],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 5, "comment": null, "checks": [],
+      "purpose": "Catálogo maestro de productos disponibles para la venta.",
+      "incomingForeignKeys": [
+        {"table": "tbd_cart_items", "name": "fk_cart_items_product", "columns": ["id_product"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_refunds",
+      "columns": [
+        {"name": "id_refund", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único del reembolso."},
+        {"name": "id_payment", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_payments(id_payment)", "description": "Referencia al pago original en tb_payments(id_payment)."},
+        {"name": "amount", "type": "decimal(10,2)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Monto reembolsado."},
+        {"name": "refunded_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora del reembolso."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_refund"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_refunds_payment", "columns": ["id_payment"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_refunds_payment", "columns": ["id_payment"], "target": "tb_payments", "targetColumns": ["id_payment"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 0, "comment": null, "checks": [],
+      "purpose": "Reembolsos emitidos sobre pagos registrados.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_returns",
+      "columns": [
+        {"name": "id_return", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la devolución."},
+        {"name": "id_order", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_orders(id_order)", "description": "Referencia a la orden en tb_orders(id_order)."},
+        {"name": "reason", "type": "text", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Motivo de la devolución."},
+        {"name": "created_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de solicitud de devolución."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_return"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_returns_order", "columns": ["id_order"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_returns_order", "columns": ["id_order"], "target": "tb_orders", "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 0, "comment": null, "checks": [],
+      "purpose": "Solicitudes de devolución vinculadas a órdenes.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_shipments",
+      "columns": [
+        {"name": "id_shipment", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único del envío."},
+        {"name": "id_order", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_orders(id_order)", "description": "Referencia a la orden en tb_orders(id_order)."},
+        {"name": "tracking_number", "type": "varchar(100)", "nullable": "NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Número de guía o rastreo del paquete."},
+        {"name": "shipped_at", "type": "timestamp", "nullable": "NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de despacho del envío."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_shipment"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_shipments_order", "columns": ["id_order"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_shipments_order", "columns": ["id_order"], "target": "tb_orders", "targetColumns": ["id_order"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 1, "comment": null, "checks": [],
+      "purpose": "Seguimiento logístico y envíos asociados a órdenes.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tb_user_addresses",
+      "columns": [
+        {"name": "ID", "type": "bigint unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la dirección."},
+        {"name": "user_ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_users(ID)", "description": "Referencia al propietario de la dirección en tb_users(ID)."},
+        {"name": "street_address", "type": "varchar(255)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Calle, número exterior e interior."},
+        {"name": "city", "type": "varchar(100)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Ciudad o municipio."},
+        {"name": "postal_code", "type": "varchar(20)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Código postal."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_addresses_user", "columns": ["user_ID"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_addresses_user", "columns": ["user_ID"], "target": "tb_users", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 2, "comment": null, "checks": [],
+      "purpose": "Direcciones de entrega registradas por los usuarios.",
+      "incomingForeignKeys": [
+        {"table": "tb_orders", "name": "fk_orders_address", "columns": ["id_address"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tb_users",
+      "columns": [
+        {"name": "ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la cuenta de usuario."},
+        {"name": "username", "type": "varchar(80)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": ["UNIQUE"], "uniqueIndexes": ["uk_username"], "comment": null, "description": "Nombre de usuario único para inicio de sesión."},
+        {"name": "email", "type": "varchar(150)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": ["UNIQUE"], "uniqueIndexes": ["uk_email"], "comment": null, "description": "Correo electrónico asociado a la cuenta."},
+        {"name": "status", "type": "bit(1)", "nullable": "NOT NULL", "auto": false, "default": "b'1'", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Indicador de cuenta activa o inactiva."},
+        {"name": "creation_date", "type": "datetime", "nullable": "NOT NULL", "auto": false, "default": "CURRENT_TIMESTAMP", "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Fecha y hora de registro del usuario."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "uk_username", "columns": ["username"], "unique": true, "type": "BTREE"},
+        {"name": "uk_email", "columns": ["email"], "unique": true, "type": "BTREE"}
+      ],
+      "foreignKeys": [],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 2, "comment": null, "checks": [],
+      "purpose": "Cuentas de acceso y credenciales de usuarios del sistema.",
+      "incomingForeignKeys": [
+        {"table": "tb_carts", "name": "fk_carts_user", "columns": ["user_ID"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_orders", "name": "fk_orders_user", "columns": ["id_user"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_people", "name": "fk_people_users", "columns": ["user_ID"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null},
+        {"table": "tb_user_addresses", "name": "fk_addresses_user", "columns": ["user_ID"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tbc_payment_methods_types",
+      "columns": [
+        {"name": "ID", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único del tipo de método de pago."},
+        {"name": "name", "type": "varchar(80)", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": [], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Nombre de la categoría de pago (ej. Tarjeta, Transferencia)."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["ID"], "unique": true, "type": "BTREE", "primary": true}
+      ],
+      "foreignKeys": [],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 3, "comment": null, "checks": [],
+      "purpose": "Catálogo base de tipos de métodos de pago.",
+      "incomingForeignKeys": [
+        {"table": "tb_payment_methods", "name": "fk_pm_type", "columns": ["id_payment_type"], "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ]
+    },
+    {
+      "name": "tbd_cancellation_items",
+      "columns": [
+        {"name": "id_item", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único del detalle de cancelación."},
+        {"name": "id_cancellation", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_order_cancellations(id_cancellation)", "description": "Referencia a tb_order_cancellations(id_cancellation)."},
+        {"name": "quantity", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": "'1'", "attributes": ["UNSIGNED"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Cantidad de unidades canceladas."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_item"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_ci_cancellation", "columns": ["id_cancellation"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_ci_cancellation", "columns": ["id_cancellation"], "target": "tb_order_cancellations", "targetColumns": ["id_cancellation"], "onDelete": "CASCADE", "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 0, "comment": null, "checks": [],
+      "purpose": "Detalle de artículos incluidos en una cancelación.",
+      "incomingForeignKeys": []
+    },
+    {
+      "name": "tbd_cart_items",
+      "columns": [
+        {"name": "id_cart_item", "type": "int unsigned", "nullable": "NOT NULL", "auto": true, "default": null, "attributes": ["UNSIGNED"], "pk": true, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Identificador único de la partida del carrito."},
+        {"name": "id_cart", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_carts(ID)", "description": "Referencia al carrito en tb_carts(ID)."},
+        {"name": "id_product", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": null, "attributes": ["UNSIGNED"], "pk": false, "fk": true, "indexes": [], "uniqueIndexes": [], "comment": null, "reference": "tb_products(ID)", "description": "Referencia al producto en tb_products(ID)."},
+        {"name": "quantity", "type": "int unsigned", "nullable": "NOT NULL", "auto": false, "default": "'1'", "attributes": ["UNSIGNED"], "pk": false, "fk": false, "indexes": [], "uniqueIndexes": [], "comment": null, "description": "Cantidad agregada al carrito."}
+      ],
+      "indexes": [
+        {"name": "PRIMARY", "columns": ["id_cart_item"], "unique": true, "type": "BTREE", "primary": true},
+        {"name": "fk_cart_items_cart", "columns": ["id_cart"], "unique": false, "type": "BTREE"},
+        {"name": "fk_cart_items_product", "columns": ["id_product"], "unique": false, "type": "BTREE"}
+      ],
+      "foreignKeys": [
+        {"name": "fk_cart_items_cart", "columns": ["id_cart"], "target": "tb_carts", "targetColumns": ["ID"], "onDelete": "CASCADE", "onUpdate": null},
+        {"name": "fk_cart_items_product", "columns": ["id_product"], "target": "tb_products", "targetColumns": ["ID"], "onDelete": null, "onUpdate": null}
+      ],
+      "engine": "InnoDB", "charset": "utf8mb4", "collation": "utf8mb4_0900_ai_ci", "count": 2, "comment": null, "checks": [],
+      "purpose": "Detalle de productos añadidos a cada carrito de compra.",
+      "incomingForeignKeys": []
+    }
+  ],
+  "objects": {
+    "views": [],
+    "triggers": [],
+    "routines": [],
+    "alterations": []
+  }
+};
+
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const state = { query: '', filter: null };
+
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function highlight(text, q) {
+    const safe = esc(text);
+    if (!q) return safe;
+    const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return safe.replace(re, '<mark class="matched">$1</mark>');
+  }
+
+  function renderHeaderAndExecutive() {
+    $('database').textContent = `Base de datos: ${DATA.database}`;
+    const totalTables = DATA.tables.length;
+    const totalCols = DATA.tables.reduce((acc, t) => acc + t.columns.length, 0);
+    const totalRows = DATA.tables.reduce((acc, t) => acc + (t.count || 0), 0);
+    const totalFKs = DATA.tables.reduce((acc, t) => acc + (t.foreignKeys?.length || 0), 0);
+
+    $('summary').textContent = `${totalTables} entidades · ${totalCols} columnas · ${totalRows.toLocaleString('es-MX')} filas registradas en respaldo`;
+    $('navCount').textContent = `(${totalTables})`;
+
+    $('executive').innerHTML = `<div class="exec-grid">
+      <div class="exec-card"><small>BASE DE DATOS</small><b>${esc(DATA.database)}</b></div>
+      <div class="exec-card"><small>TABLAS</small><b>${totalTables}</b></div>
+      <div class="exec-card"><small>COLUMNAS TOTALES</small><b>${totalCols}</b></div>
+      <div class="exec-card"><small>LLAVES FORÁNEAS</small><b>${totalFKs}</b></div>
+      <div class="exec-card"><small>FILAS EN RESPALDO</small><b>${totalRows.toLocaleString('es-MX')}</b></div>
+    </div>`;
+  }
+
+  function renderEntityIndex() {
+    const rows = DATA.tables.map(t => {
+      const pks = t.columns.filter(c => c.pk).map(c => c.name).join(', ') || '—';
+      return `<tr>
+        <td class="field"><a href="#tbl-${esc(t.name)}" style="color:var(--blue);text-decoration:none">${esc(t.name)}</a></td>
+        <td>${esc(t.engine || 'InnoDB')}</td>
+        <td>${t.columns.length}</td>
+        <td>${pks}</td>
+        <td>${t.foreignKeys?.length || 0}</td>
+        <td>${t.incomingForeignKeys?.length || 0}</td>
+        <td><span class="pill rows">${(t.count ?? 0).toLocaleString('es-MX')}</span></td>
+        <td>${esc(t.purpose || '')}</td>
+      </tr>`;
+    }).join('');
+
+    $('entity-index').innerHTML = `<table>
+      <thead><tr>
+        <th>Tabla</th><th>Motor</th><th>Columnas</th><th>Llave Primaria</th><th>FK Salientes</th><th>FK Entrantes</th><th>Filas</th><th>Propósito estimado</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  function renderObjects() {
+    const objs = DATA.objects || {};
+    const groups = [
+      { key: 'views', label: 'Vistas' },
+      { key: 'triggers', label: 'Disparadores' },
+      { key: 'routines', label: 'Rutinas (SP / Funciones)' },
+      { key: 'alterations', label: 'Alteraciones' }
+    ];
+    $('objects').innerHTML = groups.map(g => {
+      const items = objs[g.key] || [];
+      const content = items.length
+        ? items.map(it => `<details><summary>${esc(it.name || 'Objeto')}</summary><pre>${esc(it.sql || JSON.stringify(it, null, 2))}</pre></details>`).join('')
+        : `<div class="empty">Sin ${g.label.toLowerCase()} declaradas en el respaldo.</div>`;
+      return `<div class="object-group"><h4>${g.label} (${items.length})</h4>${content}</div>`;
+    }).join('');
+  }
+
+  function renderDictionary() {
+    const q = state.query.trim().toLowerCase();
+    const filteredTables = DATA.tables.filter(t => {
+      if (state.filter === 'pk' && !t.columns.some(c => c.pk)) return false;
+      if (state.filter === 'fk' && !(t.foreignKeys && t.foreignKeys.length)) return false;
+      if (state.filter === 'rows' && !(t.count > 0)) return false;
+      if (!q) return true;
+      const inTable = t.name.toLowerCase().includes(q) || (t.purpose || '').toLowerCase().includes(q);
+      const inCols = t.columns.some(c =>
+        c.name.toLowerCase().includes(q) ||
+        c.type.toLowerCase().includes(q) ||
+        (c.description || '').toLowerCase().includes(q) ||
+        (c.reference || '').toLowerCase().includes(q)
+      );
+      return inTable || inCols;
+    });
+
+    $('nav').innerHTML = filteredTables.map(t =>
+      `<a class="nav-link" href="#tbl-${esc(t.name)}"><span>${esc(t.name)}</span><span class="nav-count">${t.columns.length}</span></a>`
+    ).join('');
+
+    if (!filteredTables.length) {
+      $('dictionary').innerHTML = '';
+      $('empty').classList.remove('hidden');
+      return;
+    }
+    $('empty').classList.add('hidden');
+
+    $('dictionary').innerHTML = filteredTables.map(t => {
+      const colsHtml = t.columns.map(c => {
+        const tags = [];
+        if (c.pk) tags.push('<span class="tag pk">PK</span>');
+        if (c.fk) tags.push('<span class="tag fk">FK</span>');
+        if (c.auto) tags.push('<span class="tag attr">AUTO_INCREMENT</span>');
+        (c.uniqueIndexes || []).forEach(u => tags.push(`<span class="tag unique">UNIQUE: ${esc(u)}</span>`));
+        (c.attributes || []).forEach(a => tags.push(`<span class="tag attr">${esc(a)}</span>`));
+
+        return `<tr>
+          <td class="field">${highlight(c.name, q)}</td>
+          <td class="type">${highlight(c.type, q)}</td>
+          <td class="nullable">${esc(c.nullable)}</td>
+          <td class="default">${c.default !== null ? esc(c.default) : '—'}</td>
+          <td>${tags.join(' ') || '—'}</td>
+          <td class="reference">${c.reference ? highlight(c.reference, q) : '—'}</td>
+          <td>${highlight(c.description || '', q)}</td>
+        </tr>`;
+      }).join('');
+
+      const idxHtml = (t.indexes || []).length
+        ? t.indexes.map(i => `<div class="index-item"><b>${esc(i.name)}</b> (${esc(i.type)}) · <code>${esc(i.columns.join(', '))}</code> ${i.unique ? '<span class="tag unique">UNIQUE</span>' : ''}</div>`).join('')
+        : '<div class="empty">Sin índices registrados.</div>';
+
+      const fkOut = (t.foreignKeys || []).map(f =>
+        `<div class="fk-item"><b>${esc(f.name)}</b>: <code>${esc(f.columns.join(', '))}</code> → <code>${esc(f.target)}(${esc(f.targetColumns.join(', '))})</code> ${f.onDelete ? `[ON DELETE ${esc(f.onDelete)}]` : ''}</div>`
+      );
+      const fkIn = (t.incomingForeignKeys || []).map(f =>
+        `<div class="fk-item">← <b>${esc(f.table)}</b> (<code>${esc(f.columns.join(', '))}</code>) vía <code>${esc(f.name)}</code></div>`
+      );
+      const fkHtml = [...fkOut, ...fkIn].join('') || '<div class="empty">Sin relaciones foráneas.</div>';
+
+      return `<article class="table-card" id="tbl-${esc(t.name)}">
+        <div class="table-head">
+          <div>
+            <h3>${highlight(t.name, q)}</h3>
+            <div class="purpose">${highlight(t.purpose || '', q)}</div>
+          </div>
+          <div class="metrics">
+            <span class="pill rows">${(t.count ?? 0).toLocaleString('es-MX')} filas</span>
+            <span class="pill">${t.columns.length} columnas</span>
+            <span class="pill">${esc(t.engine || 'InnoDB')}</span>
+            <span class="pill">${esc(t.charset || 'utf8mb4')}</span>
+          </div>
+        </div>
+        <div class="matrix-wrap">
+          <table>
+            <thead><tr>
+              <th>Campo</th><th>Tipo</th><th>Nulabilidad</th><th>Default</th><th>Restricciones / Atributos</th><th>Referencia</th><th>Descripción</th>
+            </tr></thead>
+            <tbody>${colsHtml}</tbody>
+          </table>
+        </div>
+        <div class="extra">
+          <div><h4>Índices</h4>${idxHtml}</div>
+          <div><h4>Llaves foráneas y referencias</h4>${fkHtml}</div>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  function download(filename, content, mime) {
+    const blob = new Blob([content], { type: mime });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast(`Archivo descargado: ${filename}`);
+  }
+
+  $('q').addEventListener('input', (e) => {
+    state.query = e.target.value;
+    renderDictionary();
+  });
+
+  $('filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-filter]');
+    if (!btn) return;
+    const f = btn.dataset.filter;
+    state.filter = (f === 'clear' || state.filter === f) ? null : f;
+    document.querySelectorAll('#filters button[data-filter]').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === state.filter);
+    });
+    renderDictionary();
+  });
+
+  $('json').addEventListener('click', () => {
+    download(`${DATA.database}_diccionario.json`, JSON.stringify(DATA, null, 2), 'application/json');
+  });
+
+  $('csv').addEventListener('click', () => {
+    const lines = ['Tabla,Campo,Tipo,Nulabilidad,Default,PK,FK,Referencia,Descripcion'];
+    DATA.tables.forEach(t => {
+      t.columns.forEach(c => {
+        const row = [t.name, c.name, c.type, c.nullable, c.default ?? '', c.pk ? 'SI' : 'NO', c.fk ? 'SI' : 'NO', c.reference ?? '', c.description ?? '']
+          .map(v => `"${String(v).replace(/"/g, '""')}"`);
+        lines.push(row.join(','));
+      });
+    });
+    download(`${DATA.database}_diccionario.csv`, '\uFEFF' + lines.join('\n'), 'text/csv;charset=utf-8');
+  });
+
+  $('md').addEventListener('click', () => {
+    let md = `# Diccionario de Datos · ${DATA.database}\n\n`;
+    DATA.tables.forEach(t => {
+      md += `## ${t.name}\n${t.purpose || ''}\n\n| Campo | Tipo | Nulabilidad | Default | Claves | Referencia | Descripción |\n|---|---|---|---|---|---|---|\n`;
+      t.columns.forEach(c => {
+        const keys = [c.pk ? 'PK' : '', c.fk ? 'FK' : ''].filter(Boolean).join(', ') || '-';
+        md += `| ${c.name} | \`${c.type}\` | ${c.nullable} | ${c.default ?? '-'} | ${keys} | ${c.reference ?? '-'} | ${c.description ?? ''} |\n`;
+      });
+      md += '\n';
+    });
+    download(`${DATA.database}_diccionario.md`, md, 'text/markdown;charset=utf-8');
+  });
+
+  $('print').addEventListener('click', () => window.print());
+
+  renderHeaderAndExecutive();
+  renderEntityIndex();
+  renderObjects();
+  renderDictionary();
+})();
+</script>
+</body>
+</html>
